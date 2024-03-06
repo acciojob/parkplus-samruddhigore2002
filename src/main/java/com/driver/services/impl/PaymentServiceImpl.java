@@ -24,18 +24,19 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment pay(Integer reservationId, int amountSent, String mode) throws Exception {
+
         Optional<Reservation> optionalReservation = reservationRepository2.findById(reservationId);
         if(!optionalReservation.isPresent()){
             throw new NoReservationFoundException("No reservation found");
         }
-
         Reservation reservation = optionalReservation.get();
+
         int hours = reservation.getNumberOfHours();
         int pricePerHour = reservation.getSpot().getPricePerHour();
         int totalAmount = hours*pricePerHour;
 
         if(totalAmount>amountSent){
-            throw new InsufficientAmountException("insufficient amount");
+            throw new Exception("insufficient amount");
         }
         Payment payment = new Payment();
 
@@ -46,12 +47,11 @@ public class PaymentServiceImpl implements PaymentService {
         } else if(mode.equals("UPI")){
             payment.setPaymentMode(PaymentMode.UPI);
         }else{
-            throw new PaymentModeNotDetectedException("Invalid payment mode");
+            throw new Exception("Invalid payment mode");
         }
 
-        payment.setPaymentCompleted(Boolean.TRUE);
+        payment.setPaymentCompleted(true);
         payment.setReservation(reservation);
-        Payment savedPayment = paymentRepository2.save(payment);
-        return savedPayment;
+        return payment;
     }
 }
