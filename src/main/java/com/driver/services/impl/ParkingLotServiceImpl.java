@@ -1,7 +1,5 @@
 package com.driver.services.impl;
 
-import com.driver.exceptions.NoParkingLotFoundException;
-import com.driver.exceptions.NoSpotFoundException;
 import com.driver.model.ParkingLot;
 import com.driver.model.Spot;
 import com.driver.model.SpotType;
@@ -117,7 +115,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     public void deleteParkingLot(int parkingLotId) {
         Optional<ParkingLot> optionalParkingLot = parkingLotRepository1.findById(parkingLotId);
         if(!optionalParkingLot.isPresent()){
-            throw new NoParkingLotFoundException();
+            throw new RuntimeException();
         }
 
         ParkingLot parkingLot = optionalParkingLot.get();

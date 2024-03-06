@@ -1,6 +1,5 @@
 package com.driver.services.impl;
 
-import com.driver.exceptions.NoUserFoundException;
 import com.driver.model.User;
 import com.driver.repository.UserRepository;
 import com.driver.services.UserService;
@@ -19,7 +18,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer userId) {
         Optional<User> optionalUser = userRepository4.findById(userId);
         if(!optionalUser.isPresent()){
-            throw new NoUserFoundException();
+            throw new RuntimeException();
         }
 
         User user = optionalUser.get();
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public User updatePassword(Integer userId, String password) {
         Optional<User> optionalUser = userRepository4.findById(userId);
         if(!optionalUser.isPresent()){
-            throw new NoUserFoundException();
+            throw new RuntimeException();
         }
 
         User user = optionalUser.get();

@@ -1,8 +1,5 @@
 package com.driver.services.impl;
 
-import com.driver.exceptions.InsufficientAmountException;
-import com.driver.exceptions.NoReservationFoundException;
-import com.driver.exceptions.PaymentModeNotDetectedException;
 import com.driver.model.Payment;
 import com.driver.model.PaymentMode;
 import com.driver.model.Reservation;
@@ -27,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Optional<Reservation> optionalReservation = reservationRepository2.findById(reservationId);
         if(!optionalReservation.isPresent()){
-            throw new NoReservationFoundException("No reservation found");
+            throw new RuntimeException("No reservation found");
         }
         Reservation reservation = optionalReservation.get();
 
