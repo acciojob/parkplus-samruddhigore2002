@@ -65,7 +65,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
         Optional<Spot> optionalSpot = spotRepository1.findById(spotId);
         if(!optionalSpot.isPresent()){
-            throw new NoSpotFoundException("There is no spot available by this id in any parking lot");
+            throw new NoSpotFoundException();
         }
 
         Spot spot = optionalSpot.get();
@@ -88,7 +88,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     public Spot updateSpot(int parkingLotId, int spotId, int pricePerHour) {
         Optional<Spot> optionalSpot = spotRepository1.findById(spotId);
         if(!optionalSpot.isPresent()){
-            throw new NoSpotFoundException("There is no spot available by this id in any parking lot");
+            throw new NoSpotFoundException();
         }
 
         Spot spot = optionalSpot.get();
