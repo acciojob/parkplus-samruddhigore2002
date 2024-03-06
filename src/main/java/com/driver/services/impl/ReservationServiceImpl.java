@@ -28,7 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         Optional<User> optionalUser = userRepository3.findById(userId);
         if(!optionalUser.isPresent()){
-            throw  new CannotMakeReservation();
+            throw new CannotMakeReservation();
         }
 
         User user = optionalUser.get();
@@ -56,36 +56,40 @@ public class ReservationServiceImpl implements ReservationService {
         for(int i=0; i<spots.size(); i++)
         {
             Spot spot = spots.get(i);
-            SpotType spotType1 = spot.getSpotType();
-            int wheels;
-            if(String.valueOf(spotType1).equals("TWO_WHEELER")){
-                wheels = 2;
-            } else if (String.valueOf(spotType1).equals("FOUR_WHEELER")) {
-                wheels = 4;
-            }else {
-                wheels = 5;
-            }
-            int price1 = spot.getPricePerHour() * timeInHours;
-            if(wheels >= numberOfWheels){
-                if(price1 < price){
-                    assignedSpot = spot;
-                    price = price1;
-                    spot.setOccupied(Boolean.TRUE);
-                    flag =1;
+            if(String.valueOf(spot.getOccupied()).equals("FALSE")){
+                SpotType spotType1 = spot.getSpotType();
+                int wheels;
+                if(String.valueOf(spotType1).equals("TWO_WHEELER")){
+                    wheels = 2;
+                } else if (String.valueOf(spotType1).equals("FOUR_WHEELER")) {
+                    wheels = 4;
+                }else {
+                    wheels = 5;
                 }
 
+                if(wheels >= numberOfWheels){
+                    int price1 = spot.getPricePerHour() * timeInHours;
+                    if(price1 < price){
+                        assignedSpot = spot;
+                        price = price1;
+                        flag =1;
+                    }
+
+                }
             }
+
         }
         if(flag==0){
             throw new CannotMakeReservation("No spot available, cannot make reservation");
-
         }
 
+        assignedSpot.setOccupied(Boolean.TRUE);
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setSpot(assignedSpot);
         reservation.setNumberOfHours(timeInHours.intValue());
 
+        spotRepository3.save(assignedSpot);
         reservationRepository3.save(reservation);
         return reservation;
     }

@@ -51,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setPaymentCompleted(Boolean.TRUE);
         payment.setReservation(reservation);
-        paymentRepository2.save(payment);
-        return payment;
+        Payment savedPayment = paymentRepository2.save(payment);
+        return savedPayment;
     }
 }
