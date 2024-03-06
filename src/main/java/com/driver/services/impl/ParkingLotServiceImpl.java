@@ -34,7 +34,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
         Optional<ParkingLot> optionalParkingLot = parkingLotRepository1.findById(parkingLotId);
         if(!optionalParkingLot.isPresent()){
-            throw new NoParkingLotFoundException("There is no parking lot available by this id");
+            throw new NoParkingLotFoundException();
         }
 
         ParkingLot parkingLot = optionalParkingLot.get();
@@ -117,7 +117,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     public void deleteParkingLot(int parkingLotId) {
         Optional<ParkingLot> optionalParkingLot = parkingLotRepository1.findById(parkingLotId);
         if(!optionalParkingLot.isPresent()){
-            throw new NoParkingLotFoundException("There is no parking lot available by this id to delete");
+            throw new NoParkingLotFoundException();
         }
 
         ParkingLot parkingLot = optionalParkingLot.get();

@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer userId) {
         Optional<User> optionalUser = userRepository4.findById(userId);
         if(!optionalUser.isPresent()){
-            throw new NoUserFoundException("No user present by this id");
+            throw new NoUserFoundException();
         }
 
         User user = optionalUser.get();
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public User updatePassword(Integer userId, String password) {
         Optional<User> optionalUser = userRepository4.findById(userId);
         if(!optionalUser.isPresent()){
-            throw new NoUserFoundException("No user present by this id");
+            throw new NoUserFoundException();
         }
 
         User user = optionalUser.get();
