@@ -33,9 +33,10 @@ public class PaymentServiceImpl implements PaymentService {
         int totalAmount = hours*pricePerHour;
 
         if(totalAmount>amountSent){
-            throw new Exception("Insufficient amount");
+            throw new Exception("Insufficient Amount");
         }
 
+        mode = mode.toUpperCase();
         if(mode.equals("CASH") || mode.equals("CARD") || mode.equals("UPI")){
             Payment payment = new Payment();
             if(mode.equals("CASH")){
