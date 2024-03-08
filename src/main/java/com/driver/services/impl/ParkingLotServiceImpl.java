@@ -31,15 +31,16 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     @Override
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
 
-        ParkingLot parkingLot;
-        try{
-            parkingLot = parkingLotRepository1.findById(parkingLotId).get();
-        }catch(Exception e){
-            throw new RuntimeException();
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository1.findById(parkingLotId);
+
+        if(!optionalParkingLot.isPresent()) {
+            throw new RuntimeException("Invalid Parking lot ID");
         }
 
+        ParkingLot parkingLot = optionalParkingLot.get();
         Spot spot = new Spot();
-        spot.setParkingLot(parkingLot);
+        spot.setPricePerHour(pricePerHour);
+        spot.setOccupied(false);
 
         if(numberOfWheels>4){
             spot.setSpotType(SpotType.OTHERS);
@@ -49,67 +50,60 @@ public class ParkingLotServiceImpl implements ParkingLotService {
             spot.setSpotType(SpotType.TWO_WHEELER);
         }
 
-        spot.setPricePerHour(pricePerHour);
-        spot.setOccupied(false);
-
         List<Spot> spots = parkingLot.getSpotList();
         spots.add(spot);
         parkingLot.setSpotList(spots);
 
-        Spot savedSpot = spotRepository1.save(spot);
         ParkingLot savedParkingLot = parkingLotRepository1.save(parkingLot);
-
-        return savedSpot;
+        spot.setParkingLot(savedParkingLot);
+        return spot;
     }
 
     @Override
     public void deleteSpot(int spotId) {
 
-        Spot spot;
-        try{
-            spot = spotRepository1.findById(spotId).get();
-        } catch (Exception e){
-            throw new RuntimeException();
-        }
-        ParkingLot parkingLot = spot.getParkingLot();
+        Optional<Spot> optionalSpot = spotRepository1.findById(spotId);
+        if(optionalSpot.isPresent()){
+            Spot spot = optionalSpot.get();
+            ParkingLot parkingLot = spot.getParkingLot();
+            List<Spot> spots = parkingLot.getSpotList();
 
-        List<Spot> spots = parkingLot.getSpotList();
-
-        for (int i = 0; i < spots.size(); i++) {
-            Spot spot1 = spots.get(i);
-            if (spot1.getId() == spotId) {
-                spots.remove(i);
-                spotRepository1.deleteById(spotId);
+            for (Spot spot1: spots) {
+                if (spot1.getId() == spotId) {
+                    spots.remove(spot1);
+                    break;
+                }
             }
+            parkingLot.setSpotList(spots);
+            parkingLotRepository1.save(parkingLot);
         }
-        parkingLot.setSpotList(spots);
-        parkingLotRepository1.save(parkingLot);
+        spotRepository1.deleteById(spotId);
     }
 
     @Override
     public Spot updateSpot(int parkingLotId, int spotId, int pricePerHour) {
-
-        Spot spot;
-        try{
-            spot = spotRepository1.findById(spotId).get();
-        } catch (Exception e){
-            throw new RuntimeException();
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository1.findById(parkingLotId);
+        if(!optionalParkingLot.isPresent()){
+            throw new RuntimeException("Invalid ParkingLot ID");
         }
-
-        ParkingLot parkingLot = spot.getParkingLot();
+        ParkingLot parkingLot = optionalParkingLot.get();
         List<Spot> spots = parkingLot.getSpotList();
+        Spot spot = null;
 
         for (Spot spot1: spots) {
             if (spot1.getId() == spotId) {
                 spot = spot1;
+                break;
             }
         }
 
+        if(spot == null){
+            throw  new RuntimeException("Invalid spot id");
+        }
         // set new details
         spot.setPricePerHour(pricePerHour);
 
-        spotRepository1.save(spot);
-        return spot;
+        return spotRepository1.save(spot);
     }
 
     @Override
