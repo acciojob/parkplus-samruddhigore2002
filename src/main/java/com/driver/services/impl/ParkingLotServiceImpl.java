@@ -31,6 +31,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     @Override
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
 
+        Spot spot = new Spot();
         Optional<ParkingLot> optionalParkingLot = parkingLotRepository1.findById(parkingLotId);
 
         if(!optionalParkingLot.isPresent()) {
@@ -38,9 +39,10 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         }
 
         ParkingLot parkingLot = optionalParkingLot.get();
-        Spot spot = new Spot();
+
         spot.setPricePerHour(pricePerHour);
         spot.setOccupied(false);
+        spot.setReservationList(new ArrayList<>());
 
         if(numberOfWheels>4){
             spot.setSpotType(SpotType.OTHERS);
@@ -54,8 +56,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         spots.add(spot);
         parkingLot.setSpotList(spots);
 
-        ParkingLot savedParkingLot = parkingLotRepository1.save(parkingLot);
-        spot.setParkingLot(savedParkingLot);
+        parkingLotRepository1.save(parkingLot);
+        spot.setParkingLot(parkingLot);
         return spot;
     }
 
@@ -64,16 +66,19 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
         Optional<Spot> optionalSpot = spotRepository1.findById(spotId);
         if(optionalSpot.isPresent()){
+
             Spot spot = optionalSpot.get();
             ParkingLot parkingLot = spot.getParkingLot();
             List<Spot> spots = parkingLot.getSpotList();
 
-            for (Spot spot1: spots) {
-                if (spot1.getId() == spotId) {
-                    spots.remove(spot1);
-                    break;
-                }
-            }
+//            for (Spot spot1: spots) {
+//                if (spot1.getId() == spotId) {
+//                    spots.remove(spot1);
+//                    break;
+//                }
+//            }
+
+            spots.removeIf((spt -> spt.getId()==spotId));
             parkingLot.setSpotList(spots);
             parkingLotRepository1.save(parkingLot);
         }
@@ -87,10 +92,10 @@ public class ParkingLotServiceImpl implements ParkingLotService {
             throw new RuntimeException("Invalid ParkingLot ID");
         }
         ParkingLot parkingLot = optionalParkingLot.get();
-        List<Spot> spots = parkingLot.getSpotList();
+
         Spot spot = null;
 
-        for (Spot spot1: spots) {
+        for (Spot spot1: parkingLot.getSpotList()) {
             if (spot1.getId() == spotId) {
                 spot = spot1;
                 break;
